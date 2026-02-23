@@ -1,0 +1,17 @@
+# Ignore dataset
+DataSet/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore model files
+*.pth
+*.pkl
+
+# Ignore numpy saved files
+*.npy
+
+# Ignore virtual environment
+venv/
+.env/
