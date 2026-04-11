@@ -1,9 +1,12 @@
 # Ignore dataset
 DataSet/
+Uploads/
+output/
 
 # Ignore Python cache
 __pycache__/
 *.pyc
+*.md
 
 # Ignore model files
 *.pth

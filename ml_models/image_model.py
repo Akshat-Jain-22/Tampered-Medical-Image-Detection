@@ -1,33 +1,14 @@
 import torch
 import timm
-import os
-from app.config.settings import MODEL_PATH
-# -----------------------------
-# Device
-# -----------------------------
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+import torchvision.models as models
+import torch.nn as nn
+from app.config.settings import DEVICE, MODEL_PATH
+# MODEL
+model = models.resnet50(pretrained=True)
+model.fc = nn.Linear(model.fc.in_features, 2)
+model = model.to(DEVICE)
 
-# -----------------------------
-# Create model architecture
-# -----------------------------
-image_model = timm.create_model("efficientnet_b4", pretrained=True)
+model.load_state_dict(torch.load(MODEL_PATH, map_location=DEVICE))
+model.eval()
 
-image_model.classifier = torch.nn.Linear(
-    image_model.classifier.in_features,
-    2
-)
-
-# -----------------------------
-# Load trained model
-# -----------------------------
-
-if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError("❌ tamper_model.pth not found. Train the model first.")
-
-image_model.load_state_dict(
-    torch.load(MODEL_PATH, map_location=device)
-)
-
-image_model.to(device)
-image_model.eval()
-
+print("Model loaded successfully.")

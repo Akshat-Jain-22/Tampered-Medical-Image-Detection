@@ -1,69 +1,93 @@
-
-import numpy as np
+# Image Preprocessing and Transforms
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
 import cv2
-import torch
-from monai.transforms import (
-    LoadImage,
-    EnsureChannelFirst,
-    ScaleIntensity,
-    Resize,
-    RepeatChannel,
-    EnsureType,
-    ToTensor,
-    Compose
-)
+import numpy as np
+import pydicom
 
-
-# ------------------------------------
-# Contrast enhancement (CLAHE)
-# ------------------------------------
-def apply_clahe(image):
-    if image.ndim == 3:
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    image = clahe.apply(image)
-    return image
-
-# ------------------------------------
-# Noise removal
-# ------------------------------------
-def denoise(image):
-    return cv2.GaussianBlur(image, (3, 3), 0)
-
-# ------------------------------------
-# MONAI base transforms
-# ------------------------------------
-base_transform = Compose([
-    LoadImage(image_only=True),          # PNG, JPG, DICOM
-    EnsureChannelFirst(),                # (C, H, W)
-    ScaleIntensity(),                    # Normalize intensities
-    Resize((380, 380)),                # Model input
-    RepeatChannel(repeats=3), 
-    ToTensor(),
-    EnsureType()                       # Torch tensor
+# Augmentation for training
+train_transform = A.Compose([
+    A.Resize(224, 224),
+    A.HorizontalFlip(p=0.5),
+    A.RandomBrightnessContrast(p=0.2),
+    A.Normalize(),
+    ToTensorV2()
 ])
 
-# ------------------------------------
-# Main preprocessing function
-# ------------------------------------
-def preprocess_image(image_path: str):
-    image = base_transform(image_path)   # MONAI pipeline
+# Transformations for validation/inference
+val_transform = A.Compose([
+    A.Resize(224, 224),
+    A.Normalize(),
+    ToTensorV2()
+])
 
-    image = image.numpy()
+def load_image(file_path):
+    """
+    Load standard image (jpg, png, jpeg)
 
-    # Apply enhancement only for grayscale medical images
-    if image.shape[0] == 1:
-        image = image[0]
-        image = apply_clahe(image)
-        image = denoise(image)
-        image = np.expand_dims(image, axis=0)
+    Args:
+        file_path: Path to image file
 
-    # Convert to 3-channel if needed (for non-medical images)
-    if image.shape[0] == 1:
-        image = np.repeat(image, 3, axis=0)
+    Returns:
+        np.ndarray: Image array in RGB format
+    """
+    img = cv2.imread(file_path)
+    if img is None:
+        raise ValueError(f"Failed to load image: {file_path}")
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    return img
 
-    image = image.astype(np.float32)
-    image = np.expand_dims(image, axis=0)  # Batch dimension
+def load_dicom(file_path):
+    """
+    Load DICOM medical image and convert to RGB
 
-    return torch.tensor(image)
+    Args:
+        file_path: Path to DICOM file
+
+    Returns:
+        np.ndarray: Image array in RGB format
+    """
+    try:
+        ds = pydicom.dcmread(file_path)
+        img = ds.pixel_array
+
+        # Normalize pixel values to 0-255 range
+        if img.dtype != np.uint8:
+            img_min = np.min(img)
+            img_max = np.max(img)
+            if img_max - img_min > 0:
+                img = ((img - img_min) / (img_max - img_min) * 255).astype(np.uint8)
+            else:
+                img = np.zeros_like(img, dtype=np.uint8)
+
+        # Convert grayscale to RGB if needed
+        if len(img.shape) == 2:
+            img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+
+        return img
+
+    except Exception as e:
+        raise ValueError(f"Failed to load DICOM file: {str(e)}")
+
+def transform(file_path):
+    """
+    Load medical image and apply validation transforms
+
+    Supports: jpg, png, jpeg, dcm files
+
+    Args:
+        file_path: Path to image file
+
+    Returns:
+        torch.Tensor: Preprocessed image tensor (1, 3, 224, 224)
+    """
+    # Load appropriate format
+    if file_path.lower().endswith('.dcm'):
+        img = load_dicom(file_path)
+    else:
+        img = load_image(file_path)
+
+    # Apply transformations and return as batch tensor
+    transformed = val_transform(image=img)
+    return transformed['image'].unsqueeze(0)
+
