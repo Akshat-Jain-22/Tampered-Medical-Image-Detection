@@ -2,6 +2,7 @@
 DataSet/
 Uploads/
 output/
+output1/
 
 # Ignore Python cache
 __pycache__/
