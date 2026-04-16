@@ -10,7 +10,6 @@ UPLOAD_DIR = os.path.join(BASE_DIR, "Uploads", "Images")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 BATCH_SIZE = 32
-# Label mapping
 folders = {
     "TB": 0,
     "FM": 1,

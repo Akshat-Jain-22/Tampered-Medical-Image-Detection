@@ -1,18 +1,15 @@
 const API_BASE = "/api";
 let selectedFile = null;
 
-// Initialize
 document.addEventListener('DOMContentLoaded', function() {
   const fileInput = document.getElementById('fileInput');
   fileInput.addEventListener('change', handleFileSelect);
 });
 
-// Handle file selection
 function handleFileSelect(event) {
   const file = event.target.files[0];
   if (!file) return;
 
-  // Check file type
   const validTypes = ['image/png', 'image/jpeg', 'application/dicom', 'application/octet-stream'];
   const validExtensions = ['.jpg', '.jpeg', '.png', '.dcm'];
 
@@ -27,13 +24,10 @@ function handleFileSelect(event) {
 
   selectedFile = file;
 
-  // Display filename
   document.getElementById('fileName').textContent = `Selected: ${file.name}`;
 
-  // Display file preview (for image files only)
   const reader = new FileReader();
   reader.onload = function(e) {
-    // Check if it's DICOM (binary format)
     if (!file.name.toLowerCase().endsWith('.dcm')) {
       document.getElementById('original').src = e.target.result;
       document.getElementById('original').style.display = 'block';
@@ -44,7 +38,6 @@ function handleFileSelect(event) {
   reader.readAsDataURL(file);
 }
 
-// Analyze image
 async function analyzeImage() {
   if (!selectedFile) {
     showError('Please select an image file first');
@@ -54,7 +47,6 @@ async function analyzeImage() {
   const formData = new FormData();
   formData.append('file', selectedFile);
 
-  // Show loading
   showLoading(true);
   hideResults();
 
@@ -81,54 +73,53 @@ async function analyzeImage() {
   }
 }
 
-// Display results
 function displayResults(result) {
-  // Classification
   const classification = result.classification;
   const statusElement = document.getElementById('status');
   statusElement.textContent = classification;
   statusElement.className = 'status-text ' + classification.toLowerCase();
 
-  // Probabilities
   const tamperedProb = (result.tampered_probability * 100).toFixed(1);
   const authenticProb = (result.authentic_probability * 100).toFixed(1);
 
   document.getElementById('tamperedProb').textContent = tamperedProb;
   document.getElementById('authenticProb').textContent = authenticProb;
 
-  // Confidence
   const confidence = classification === 'Tampered' ? tamperedProb : authenticProb;
   document.getElementById('confidence').innerHTML = `<strong>Confidence:</strong> ${confidence}%`;
 
-  // Risk gauge
   const riskLevel = (result.tampered_probability * 100).toFixed(0);
   updateGauge(riskLevel);
 
-  // Heatmap - convert array back to image
-  if (result.heatmap) {
-    displayHeatmap(result.heatmap);
-  } else if (result.heatmap_path) {
-    document.getElementById('heatmapImage').src = result.heatmap_path;
+  const localizationSection = document.getElementById('localizationSection');
+  const heatmapImage = document.getElementById('heatmapImage');
+
+  if (classification === 'Tampered' && (result.heatmap || result.heatmap_path)) {
+    localizationSection.style.display = 'block';
+
+    if (result.heatmap) {
+      displayHeatmap(result.heatmap);
+    } else if (result.heatmap_path) {
+      heatmapImage.src = result.heatmap_path;
+    }
+  } else {
+    localizationSection.style.display = 'none';
+    heatmapImage.removeAttribute('src');
   }
 
-  // Show results section
   document.getElementById('results').style.display = 'block';
   document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
 }
 
-// Display heatmap
 function displayHeatmap(heatmapArray) {
-  // Create canvas and draw heatmap
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
-  // Assume 224x224 heatmap (from model preprocessing)
   const width = 224;
   const height = 224;
   canvas.width = width;
   canvas.height = height;
 
-  // Create image data from array
   const imageData = ctx.createImageData(width, height);
   const data = imageData.data;
 
@@ -137,35 +128,31 @@ function displayHeatmap(heatmapArray) {
     const pixelArray = heatmapArray[i];
     for (let j = 0; j < pixelArray.length; j++) {
       const pixelValues = pixelArray[j];
-      data[dataIndex] = Math.round(pixelValues[0] * 255);      // R
-      data[dataIndex + 1] = Math.round(pixelValues[1] * 255);  // G
-      data[dataIndex + 2] = Math.round(pixelValues[2] * 255);  // B
-      data[dataIndex + 3] = 255;                               // A
+      data[dataIndex] = Math.round(pixelValues[0] * 255);
+      data[dataIndex + 1] = Math.round(pixelValues[1] * 255);
+      data[dataIndex + 2] = Math.round(pixelValues[2] * 255);
+      data[dataIndex + 3] = 255;
       dataIndex += 4;
     }
   }
 
   ctx.putImageData(imageData, 0, 0);
 
-  // Convert to image
   const heatmapImage = document.getElementById('heatmapImage');
   heatmapImage.src = canvas.toDataURL();
 }
 
-// Update risk gauge
 function updateGauge(percent) {
   percent = Math.min(Math.max(percent, 0), 100);
 
   const fill = document.getElementById('gaugeFill');
   const text = document.getElementById('gaugeText');
 
-  // Calculate rotation: -90deg to +90deg (180deg total)
   const rotation = (percent / 100) * 180 - 90;
   fill.style.transform = `rotate(${rotation}deg)`;
 
   text.textContent = percent + '%';
 
-  // Change color based on risk
   if (percent < 30) {
     fill.style.background = 'linear-gradient(to top, #10B981, #3B82F6)';
     text.style.color = '#10B981';
@@ -178,7 +165,6 @@ function updateGauge(percent) {
   }
 }
 
-// Show loading state
 function showLoading(show) {
   document.getElementById('loading').style.display = show ? 'block' : 'none';
   const analyzeBtn = document.querySelector('button[onclick="analyzeImage()"]');
@@ -187,14 +173,11 @@ function showLoading(show) {
   }
 }
 
-// Show results section
 function hideResults() {
   document.getElementById('results').style.display = 'none';
 }
 
-// Show error
 function showError(message) {
-  // Clear previous error
   const existingError = document.querySelector('.error');
   if (existingError) {
     existingError.remove();
@@ -207,11 +190,9 @@ function showError(message) {
   const container = document.querySelector('.container') || document.body;
   container.insertBefore(errorDiv, container.firstChild);
 
-  // Remove after 5 seconds
   setTimeout(() => errorDiv.remove(), 5000);
 }
 
-// Clear file selection
 function clearFileSelection() {
   selectedFile = null;
   document.getElementById('fileInput').value = '';
@@ -219,7 +200,6 @@ function clearFileSelection() {
   document.getElementById('original').src = '';
 }
 
-// Handle file input click
 document.addEventListener('DOMContentLoaded', function() {
   const customFileLabel = document.querySelector('.custom-file');
   const fileInput = document.getElementById('fileInput');
@@ -231,7 +211,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Drag and drop support
 document.addEventListener('DOMContentLoaded', function() {
   const imageContainer = document.querySelector('.image-container');
 

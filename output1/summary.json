@@ -1,0 +1,14 @@
+{
+  "total_images": 471,
+  "predictions_dist": {
+    "Authentic": 0,
+    "Tampered": 471
+  },
+  "bottom_region_bias": {
+    "mean": 0.21987807072082144,
+    "std": 0.06616719925093657,
+    "min": 0.08729386329650879,
+    "max": 0.34392979741096497
+  },
+  "interpretation": "[!!] Moderate bias toward bottom region (investigate)"
+}

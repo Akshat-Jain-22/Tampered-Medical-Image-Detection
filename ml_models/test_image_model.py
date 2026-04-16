@@ -28,7 +28,6 @@ with torch.no_grad():
         all_paths.extend(paths)
 
 
-# SAVE CSV
 df = pd.DataFrame({
     "image": all_paths,
     "true_label": all_labels,
@@ -39,7 +38,6 @@ df = pd.DataFrame({
 df.to_csv(f"{OUTPUT_DIR}/inference_results.csv", index=False)
 
 
-# CONFUSION MATRIX
 cm = confusion_matrix(all_labels, all_preds)
 
 plt.figure()
@@ -60,7 +58,6 @@ plt.savefig(f"{OUTPUT_DIR}/confusion_matrix.png")
 plt.close()
 
 
-# METRICS
 print("\nClassification Report:")
 print(classification_report(all_labels, all_preds))
 
@@ -71,7 +68,7 @@ auc_score = roc_auc_score(all_labels, all_probs)
 
 plt.figure()
 plt.plot(fpr, tpr, label=f"AUC = {auc_score:.4f}")
-plt.plot([0, 1], [0, 1], linestyle='--')  # diagonal line
+plt.plot([0, 1], [0, 1], linestyle='--')
 plt.xlabel("False Positive Rate")
 plt.ylabel("True Positive Rate")
 plt.title("ROC Curve")
@@ -91,7 +88,6 @@ plt.savefig(f"{OUTPUT_DIR}/pr_curve.png")
 plt.close()
 
 
-# GRAD-CAM VISUALIZATION
 for i, (imgs, labels, paths) in enumerate(test_loader):
     imgs = imgs.to(DEVICE)
     outputs = model(imgs)

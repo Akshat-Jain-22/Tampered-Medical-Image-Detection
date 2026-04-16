@@ -18,3 +18,6 @@ __pycache__/
 # Ignore virtual environment
 venv/
 .env/
+
+diagnose_gradcam.py
+grad_cam_debugger.py

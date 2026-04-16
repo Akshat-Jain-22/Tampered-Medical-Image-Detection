@@ -22,7 +22,6 @@ for folder, label in folders.items():
             data.append(full_path)
             labels.append(label)
 
-# SPLIT
 train_data, temp_data, train_labels, temp_labels = train_test_split(
     data, labels, test_size=0.3, stratify=labels, random_state=42
 )
@@ -31,7 +30,6 @@ val_data, test_data, val_labels, test_labels = train_test_split(
     temp_data, temp_labels, test_size=0.5, stratify=temp_labels, random_state=42
 )
 
-# DATASET
 class DicomDataset(Dataset):
     def __init__(self, file_paths, labels, transform=None):
         self.file_paths = file_paths
@@ -65,7 +63,6 @@ class DicomDataset(Dataset):
         return img, label, path
 
 
-# LOADERS
 train_loader = DataLoader(DicomDataset(train_data, train_labels, train_transform),
                           batch_size=BATCH_SIZE, shuffle=True)
 

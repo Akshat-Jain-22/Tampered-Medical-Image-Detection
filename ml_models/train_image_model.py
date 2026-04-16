@@ -9,7 +9,6 @@ from app.config.settings import DEVICE, OUTPUT_DIR
 EPOCHS = 15
 LR = 1e-4
 
-# MODEL
 model = models.resnet50(pretrained=True)
 model.fc = nn.Linear(model.fc.in_features, 2)
 model = model.to(DEVICE)
@@ -18,12 +17,10 @@ criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
 
-# METRIC STORAGE
 train_losses, val_losses = [], []
 train_accs, val_accs = [], []
 
 
-# TRAIN FUNCTION
 def run_epoch(loader, train=True):
     if train:
         model.train()
@@ -52,7 +49,6 @@ def run_epoch(loader, train=True):
     return total_loss / len(loader), correct / total
 
 
-# TRAIN LOOP
 best_val_loss = float("inf")
 
 for epoch in range(EPOCHS):
@@ -74,7 +70,6 @@ for epoch in range(EPOCHS):
         torch.save(model.state_dict(), f"{OUTPUT_DIR}/best_model.pth")
 
 
-# PLOT GRAPHS
 plt.figure()
 plt.plot(train_losses, label="Train Loss")
 plt.plot(val_losses, label="Val Loss")

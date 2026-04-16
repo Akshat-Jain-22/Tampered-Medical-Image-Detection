@@ -1,0 +1,36 @@
+{
+  "file": "D:\\Umesh\\Document\\codes\\Projects\\Medical-Image-Temper-Detection\\DataSet\\Experiment_Blind\\FM\\1005\\293.dcm",
+  "prediction": "Tampered",
+  "authentic_prob": 2.5642540890657983e-07,
+  "tampered_prob": 0.9999997615814209,
+  "gradcam_comparison": {
+    "authentic": {
+      "bottom_score": 0.06621458381414413,
+      "top_score": 0.008292862214148045,
+      "left_score": 0.028776025399565697,
+      "right_score": 0.04573141783475876,
+      "max_activation": 0.9999997019767761,
+      "distribution": {
+        "mean": 0.037253718823194504,
+        "std": 0.11373590677976608,
+        "entropy": 2640.16357421875
+      }
+    },
+    "tampered": {
+      "bottom_score": 0.2835838496685028,
+      "top_score": 0.03335145488381386,
+      "left_score": 0.13226421177387238,
+      "right_score": 0.18467110395431519,
+      "max_activation": 1.0,
+      "distribution": {
+        "mean": 0.15846765041351318,
+        "std": 0.23695524036884308,
+        "entropy": 7746.775390625
+      }
+    },
+    "differences": {
+      "bottom_region_difference": 0.21736925840377808,
+      "is_bias_in_tampered": true
+    }
+  }
+}

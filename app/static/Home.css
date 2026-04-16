@@ -46,7 +46,6 @@ body {
   }
 }
 
-/* Header Section */
 .header {
   margin-bottom: 60px;
 }
@@ -82,7 +81,6 @@ body {
   font-weight: 300;
 }
 
-/* Features Section */
 .features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -142,7 +140,6 @@ body {
   line-height: 1.6;
 }
 
-/* Description Section */
 .description {
   margin: 60px 0;
   padding: 40px;
@@ -166,7 +163,6 @@ body {
   line-height: 1.8;
 }
 
-/* CTA Section */
 .cta-section {
   margin: 50px 0;
 }
@@ -197,7 +193,6 @@ body {
   transform: translateY(-1px);
 }
 
-/* Footer Section */
 .footer {
   margin-top: 80px;
   padding-top: 30px;
@@ -206,7 +201,6 @@ body {
   font-size: 14px;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .title {
     font-size: 32px;
@@ -299,18 +293,15 @@ body {
   }
 }
 
-/* Animations */
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.8; }
 }
 
-/* Glow effect */
 .logo {
   filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
 }
 
-/* Additional polish */
 ::-webkit-scrollbar {
   width: 8px;
 }
