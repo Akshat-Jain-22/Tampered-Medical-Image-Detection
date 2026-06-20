@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical AI Tampering Detection</title>
+  <link rel="stylesheet" href="/static/index.css">
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">🧠</div>
+    <div class="title">Medical Image Tampering Detection</div>
+    <div class="subtitle">AI-powered Tamper Detection System</div>
+  </div>
+
+  <div class="container">
+    <div class="card upload-card">
+      <h3>Upload Medical Image</h3>
+      <label for="fileInput" class="custom-file">
+        Choose Medical Image
+      </label>
+      <input type="file" id="fileInput" hidden accept=".jpg,.jpeg,.png,.dcm">
+      <p id="fileName" class="file-name"></p>
+      <button onclick="analyzeImage()">Analyze Scan</button>
+    </div>
+
+    <div class="card">
+      <div class="image-container">
+        <img id="original" class="base-img" alt="Medical Image">
+        <canvas id="overlay"></canvas>
+      </div>
+      <div id="loading" class="loading" style="display:none;">
+        Analyzing Medical Image using AI...
+      </div>
+    </div>
+  </div>
+
+  <div id="results" class="results" style="display:none;">
+    <h2>Analysis Results</h2>
+
+    <div class="grid">
+      <div class="box">
+        <h4>Classification</h4>
+        <p id="status" class="status-text"></p>
+        <p id="confidence" class="confidence-text"></p>
+      </div>
+
+      <div class="box">
+        <h4>Probabilities</h4>
+        <p><strong>Tampered:</strong> <span id="tamperedProb">0</span>%</p>
+        <p><strong>Authentic:</strong> <span id="authenticProb">0</span>%</p>
+      </div>
+
+      <div class="box">
+        <h4>Risk Level</h4>
+        <div class="gauge">
+          <div class="gauge-body">
+            <div class="gauge-fill" id="gaugeFill"></div>
+            <div class="gauge-cover" id="gaugeText">0%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="localizationSection" class="localization-section" style="display:none;">
+      <h3>Tamper Localization (Heatmap)</h3>
+      <img id="heatmapImage" alt="Localization Heatmap" style="max-width: 100%; border-radius: 10px;">
+    </div>
+  </div>
+
+  <script src="/static/index.js"></script>
+</body>
+</html>
