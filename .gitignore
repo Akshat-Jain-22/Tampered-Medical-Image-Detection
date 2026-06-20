@@ -1,0 +1,24 @@
+# Ignore dataset
+DataSet/
+Uploads/
+output/
+output1/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.md
+
+# Ignore model files
+*.pth
+*.pkl
+
+# Ignore numpy saved files
+*.npy
+
+# Ignore virtual environment
+venv/
+.env/
+
+diagnose_gradcam.py
+grad_cam_debugger.py
