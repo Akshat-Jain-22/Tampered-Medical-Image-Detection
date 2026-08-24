@@ -12,3 +12,5 @@ scikit-learn==1.8.0
 joblib==1.5.3
 tqdm==4.67.3
 albumentations==1.4.14
+albucore==0.0.16
+matplotlib==3.8.2
