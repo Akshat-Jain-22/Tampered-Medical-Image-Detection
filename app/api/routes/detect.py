@@ -60,6 +60,7 @@ async def detect_medical_tamper(file: UploadFile = File(...)):
         return result
 
     except ValueError as e:
+<<<<<<< HEAD
 
         raise HTTPException(status_code=400, detail=f"Processing error: {str(e)}")
 
@@ -78,3 +79,16 @@ async def detect_medical_tamper(file: UploadFile = File(...)):
         except:
 
             pass
+=======
+        raise HTTPException(status_code=400, detail=f"Processing error: {str(e)}")
+    except Exception as e:
+
+        raise HTTPException(status_code=500, detail=f"Inference error: {str(e)}")
+    finally:
+
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except:
+            pass
+>>>>>>> 76fce07 (Update medical image detection pipeline)
