@@ -79,7 +79,7 @@ async def detect_medical_tamper(file: UploadFile = File(...)):
         except:
 
             pass
-=======
+
         raise HTTPException(status_code=400, detail=f"Processing error: {str(e)}")
     except Exception as e:
 
@@ -91,4 +91,4 @@ async def detect_medical_tamper(file: UploadFile = File(...)):
                 os.remove(file_path)
         except:
             pass
->>>>>>> 76fce07 (Update medical image detection pipeline)
+
