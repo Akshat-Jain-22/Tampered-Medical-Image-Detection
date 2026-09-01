@@ -60,7 +60,7 @@ async def detect_medical_tamper(file: UploadFile = File(...)):
         return result
 
     except ValueError as e:
-<<<<<<< HEAD
+
 
         raise HTTPException(status_code=400, detail=f"Processing error: {str(e)}")
 
